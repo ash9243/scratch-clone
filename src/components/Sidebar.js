@@ -1,32 +1,71 @@
 import React from "react";
 import { Grid } from '@material-ui/core';
+import FlagIcon from '@material-ui/icons/Flag';
+import ReplayIcon from '@material-ui/icons/Replay';
 
 import * as Constants from "../Common/Constants";
+// import FlagIcon from './FlagIcon';
 import { useStyles } from './SidebarStyles';
 
+const tagsProps = (classes, props) => {
+    let eventListeners = {
+        draggable: true,
+        onDragStart: props.handleDragStart,
+        onDrag: props.handleDrag,
+        onDragEnd: props.handleDragEnd
+    }
+    return ({
+        motionBlockProps: {
+            ...eventListeners,
+            item: true,
+            className: classes.motionBlock
+        },
+        eventBlockProps: {
+            ...eventListeners,
+            item: true,
+            className: classes.eventBlock
+        },
+        headerText: {
+            container: true,
+            item: true,
+            className: classes.headerText
+        },
+        blockContainer: {
+            container: true,
+            item: true,
+            direction: "column"
+        }
+    })
+
+}
 export default function Sidebar(props) {
 
     const classes = useStyles();
+
+    const { motionBlockProps, eventBlockProps, headerText, blockContainer } = tagsProps(classes, props);
+
     return (
-        <Grid container>
-            <Grid container>Events</Grid>
-            <Grid container>
-                <Grid item className={classes.eventBlock}>
-                    When FlagIcon Clicked
+        <Grid container direction="column">
+            <Grid {...headerText}>Events</Grid>
+            <Grid {...blockContainer}>
+                <Grid {...eventBlockProps}>
+                    When flag Clicked
                 </Grid>
 
-                <Grid item className={classes.eventBlock}>
+                <Grid {...eventBlockProps}>
                     When Sprite Clicked
                 </Grid>
 
             </Grid>
-            <Grid container>Motions</Grid>
-            <Grid container>
-                <Grid item>Move 10 steps</Grid>
-                <Grid item>Move AntiIcon 15</Grid>
-                <Grid item>Move ClockIcon 15</Grid>
+            <Grid {...headerText}>Motions</Grid>
+            <Grid {...blockContainer}>
+                <Grid {...motionBlockProps}>Move 10 steps</Grid>
+                <Grid {...motionBlockProps}>Move anti 15</Grid>
+                <Grid {...motionBlockProps}>Move clock 15</Grid>
             </Grid>
 
         </Grid>
     );
 }
+
+
