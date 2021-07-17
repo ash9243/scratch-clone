@@ -48,20 +48,20 @@ export default function Sidebar(props) {
         <Grid container direction="column">
             <Grid {...headerText}>Events</Grid>
             <Grid {...blockContainer}>
-                <Grid {...eventBlockProps}>
+                <Grid id="E:F:0" {...eventBlockProps}>
                     When flag Clicked
                 </Grid>
 
-                <Grid {...eventBlockProps}>
+                <Grid id="E:S:0" {...eventBlockProps}>
                     When Sprite Clicked
                 </Grid>
 
             </Grid>
             <Grid {...headerText}>Motions</Grid>
             <Grid {...blockContainer}>
-                <Grid {...motionBlockProps}>Move 10 steps</Grid>
-                <Grid {...motionBlockProps}>Move anti 15</Grid>
-                <Grid {...motionBlockProps}>Move clock 15</Grid>
+                <Grid id="M:L:0" {...motionBlockProps}>Move 10 steps</Grid>
+                <Grid id="M:RA:0" {...motionBlockProps}>Move anti 15</Grid>
+                <Grid id="M:RC:0" {...motionBlockProps}>Move clock 15</Grid>
             </Grid>
 
         </Grid>
