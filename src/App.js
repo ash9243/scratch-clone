@@ -8,7 +8,7 @@ import { useStyles } from './AppStyles';
 import * as Constants from "./Common/Constants";
 
 
-const tagProps = (classes, handleCloneDragStart, handleCloneDrag, handleCloneDragEnd) => {
+const tagProps = (classes, handleDragStart, handleDrag, handleDragEnd) => {
     return {
         sectionProps: {
             component: Card,
@@ -17,96 +17,90 @@ const tagProps = (classes, handleCloneDragStart, handleCloneDrag, handleCloneDra
             item: true,
         },
         dragFuncProps: {
-            handleCloneDragStart,
-            handleCloneDrag,
-            handleCloneDragEnd
+            handleDragStart,
+            handleDrag,
+            handleDragEnd
 
         }
     }
 }
 export default function App() {
 
-    const [dragging, setDragging] = useState(false);
-    const [diffX, setDiffX] = useState(0);
-    const [diffY, setDiffY] = useState(0);
-    const [cloneId, setCloneId] = useState(0)
+
+
+
+    const selectedElement = useRef(null);
 
     const totalElements = useRef(0);
+    const diffX = useRef(0);
+    const diffY = useRef(0);
+    const dragging = useRef(false);
+
 
     const classes = useStyles();
 
 
 
-    const handleCloneDragStart = (event) => {
+    const handleDragStart = (event) => {
         console.log("drag start");
 
-        //clone element and provide id
+        // element and provide id
         let targetId = event.currentTarget.id.split(":");
-        let clone = event.currentTarget.cloneNode(true);
-        totalElements.current++;
-        console.log('total elements', totalElements);
-        clone.id = `${targetId[0]}:${targetId[1]}:${totalElements.current}`;
-        clone.key = clone.id;
 
-        document.getElementById("MidArea").appendChild(clone);
+        if (targetId[2] === "0") {
+            //clone
+            let clone = event.currentTarget.cloneNode(true);
+            totalElements.current++;
+            console.log('total elements', totalElements);
+            clone.id = `${targetId[0]}:${targetId[1]}:${totalElements.current}`;
+            clone.key = clone.id;
+
+            //add to mid area
+            document.getElementById("MidArea").appendChild(clone);
+
+            //add event listeners
+            clone.addEventListener("dragstart", handleDragStart);
+            clone.addEventListener("drag", handleDrag);
+            clone.addEventListener("dragend", handleDragEnd);
+
+            selectedElement.current = clone;
+        }
+        else {
+            selectedElement.current = event.currentTarget;
+        }
 
 
-        console.log(clone.id);
-        setCloneId(clone.id);
-        setDiffX(event.clientX - event.currentTarget.getBoundingClientRect().left);
-        setDiffY(event.clientY - event.currentTarget.getBoundingClientRect().top);
-        setDragging(true);
+        diffX.current = event.clientX - event.currentTarget.getBoundingClientRect().left;
+        diffY.current = event.clientY - event.currentTarget.getBoundingClientRect().top;
+        dragging.current = true;
     }
 
-    const handleCloneDrag = (event) => {
-        if (dragging) {
+    const handleDrag = (event) => {
 
-            let left = event.clientX - diffX;
-            let top = event.clientY - diffY;
+        if (dragging.current) {
+
+            let left = event.clientX - diffX.current;
+            let top = event.clientY - diffY.current;
 
             if (event.clientX !== 0) {
-                document.getElementById(cloneId).style.position = "absolute";
-                document.getElementById(cloneId).style.left = left + "px";
-                document.getElementById(cloneId).style.top = top + "px";
+
+                selectedElement.current.style.position = "absolute";
+                selectedElement.current.style.left = left + "px";
+                selectedElement.current.style.top = top + "px";
+
             }
         }
     }
 
-    const handleCloneDragEnd = (event) => {
+    const handleDragEnd = (event) => {
         console.log('drag end');
-        setDragging(false);
+        dragging.current = false
         return false;
     }
 
-    const handleMoveDragStart = (event) => {
-        console.log("drag start");
 
-        setDiffX(event.clientX - event.currentTarget.getBoundingClientRect().left);
-        setDiffY(event.clientY - event.currentTarget.getBoundingClientRect().top);
-        setDragging(true);
-    }
 
-    const handleMoveDrag = (event) => {
-        if (dragging) {
-
-            let left = event.clientX - diffX;
-            let top = event.clientY - diffY;
-
-            if (event.clientX !== 0) {
-                event.currentTarget.style.position = "absolute";
-                event.currentTarget.style.left = left + "px";
-                event.currentTarget.style.top = top + "px";
-            }
-        }
-    }
-
-    const handleMoveDragEnd = (event) => {
-        console.log('drag end');
-        setDragging(false);
-        return false;
-    }
-
-    const { sectionProps, dragFuncProps } = tagProps(classes, handleCloneDragStart, handleCloneDrag, handleCloneDragEnd);
+    const { sectionProps, dragFuncProps } = tagProps(classes, handleDragStart, handleDrag, handleDragEnd);
 
     return (
         <Grid container className={classes.mainContainer}>

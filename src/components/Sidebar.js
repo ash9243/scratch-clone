@@ -10,9 +10,9 @@ import { useStyles } from './SidebarStyles';
 const tagsProps = (classes, props) => {
     let eventListeners = {
         draggable: true,
-        onDragStart: props.handleCloneDragStart,
-        onDrag: props.handleCloneDrag,
-        onDragEnd: props.handleCloneDragEnd
+        onDragStart: props.handleDragStart,
+        onDrag: props.handleDrag,
+        onDragEnd: props.handleDragEnd
     }
     return ({
         motionBlockProps: {
