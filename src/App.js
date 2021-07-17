@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Grid, Card } from "@material-ui/core";
 
 import Sidebar from "./components/Sidebar";
@@ -8,7 +8,7 @@ import { useStyles } from './AppStyles';
 import * as Constants from "./Common/Constants";
 
 
-const tagProps = (classes, handleDragStart, handleDrag, handleDragEnd) => {
+const tagProps = (classes, handleCloneDragStart, handleCloneDrag, handleCloneDragEnd) => {
     return {
         sectionProps: {
             component: Card,
@@ -17,9 +17,9 @@ const tagProps = (classes, handleDragStart, handleDrag, handleDragEnd) => {
             item: true,
         },
         dragFuncProps: {
-            handleDragStart,
-            handleDrag,
-            handleDragEnd
+            handleCloneDragStart,
+            handleCloneDrag,
+            handleCloneDragEnd
 
         }
     }
@@ -27,13 +27,58 @@ const tagProps = (classes, handleDragStart, handleDrag, handleDragEnd) => {
 export default function App() {
 
     const [dragging, setDragging] = useState(false);
-    const [diffX, setDiffX] = useState(0)
-    const [diffY, setDiffY] = useState(0)
+    const [diffX, setDiffX] = useState(0);
+    const [diffY, setDiffY] = useState(0);
+    const [cloneId, setCloneId] = useState(0)
 
+    const totalElements = useRef(0);
 
     const classes = useStyles();
 
-    const handleDragStart = (event) => {
+
+
+    const handleCloneDragStart = (event) => {
+        console.log("drag start");
+
+        //clone element and provide id
+        let targetId = event.currentTarget.id.split(":");
+        let clone = event.currentTarget.cloneNode(true);
+        totalElements.current++;
+        console.log('total elements', totalElements);
+        clone.id = `${targetId[0]}:${targetId[1]}:${totalElements.current}`;
+        clone.key = clone.id;
+
+        document.getElementById("MidArea").appendChild(clone);
+
+
+        console.log(clone.id);
+        setCloneId(clone.id);
+        setDiffX(event.clientX - event.currentTarget.getBoundingClientRect().left);
+        setDiffY(event.clientY - event.currentTarget.getBoundingClientRect().top);
+        setDragging(true);
+    }
+
+    const handleCloneDrag = (event) => {
+        if (dragging) {
+
+            let left = event.clientX - diffX;
+            let top = event.clientY - diffY;
+
+            if (event.clientX !== 0) {
+                document.getElementById(cloneId).style.position = "absolute";
+                document.getElementById(cloneId).style.left = left + "px";
+                document.getElementById(cloneId).style.top = top + "px";
+            }
+        }
+    }
+
+    const handleCloneDragEnd = (event) => {
+        console.log('drag end');
+        setDragging(false);
+        return false;
+    }
+
+    const handleMoveDragStart = (event) => {
         console.log("drag start");
 
         setDiffX(event.clientX - event.currentTarget.getBoundingClientRect().left);
@@ -41,7 +86,7 @@ export default function App() {
         setDragging(true);
     }
 
-    const handleDrag = (event) => {
+    const handleMoveDrag = (event) => {
         if (dragging) {
 
             let left = event.clientX - diffX;
@@ -55,13 +100,13 @@ export default function App() {
         }
     }
 
-    const handleDragEnd = (event) => {
+    const handleMoveDragEnd = (event) => {
         console.log('drag end');
         setDragging(false);
         return false;
     }
 
-    const { sectionProps, dragFuncProps } = tagProps(classes, handleDragStart, handleDrag, handleDragEnd);
+    const { sectionProps, dragFuncProps } = tagProps(classes, handleCloneDragStart, handleCloneDrag, handleCloneDragEnd);
 
     return (
         <Grid container className={classes.mainContainer}>
