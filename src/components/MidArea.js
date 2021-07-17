@@ -2,7 +2,7 @@ import React from "react";
 
 export default function MidArea() {
   return (
-    <div id="MidArea" className="flex-1 h-full overflow-auto">
+    <div id="MidArea" style={{ height: "100%", width: "100%" }}>
       {"mid area"}{" "}
     </div>
   );

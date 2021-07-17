@@ -6,7 +6,8 @@ export const useStyles = makeStyles((theme) => {
         margin: "10px",
         fontSize: "14px",
         width: "fit-content",
-        color: "white"
+        color: "white",
+        cursor: "pointer"
     }
     return ({
         block,
