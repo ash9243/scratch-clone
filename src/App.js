@@ -49,6 +49,9 @@ export default function App() {
     const spriteDragging = useRef(false);
     const selectedSprite = useRef(null);
 
+    let spriteInitialX = useRef(0);
+    let spriteInitialY = useRef(0);
+
     const [workingSprite, setWorkingSprite] = useState(Constants.CAT_SPRITE);
     const [allSprites, setAllSprites] = useState([Constants.CAT_SPRITE]);
 
@@ -59,8 +62,15 @@ export default function App() {
     const classes = useStyles();
 
     const handleSpriteDragStart = (event) => {
+
+        spriteInitialX.current = event.currentTarget.getBoundingClientRect().left;
+        spriteInitialY.current = event.currentTarget.getBoundingClientRect().top;
+
         spriteX.current = event.pageX - event.currentTarget.getBoundingClientRect().left;
         spriteY.current = event.pageY - event.currentTarget.getBoundingClientRect().top;
+
+        console.log("sprite x", spriteInitialX);
+        console.log("sprite y", spriteInitialY);
         spriteDragging.current = true;
         selectedSprite.current = event.currentTarget;
     }
@@ -83,6 +93,24 @@ export default function App() {
     }
 
     const handleSpriteDragEnd = (event) => {
+        let previewArea = document.getElementById("PreviewArea");
+        let [PAL, PAT, PAR, PAB] = getLTRB(previewArea);
+        let [SAL, SAT, SAR, SAB] = getLTRB(event.currentTarget);
+
+
+        console.log("sprite x", spriteInitialX);
+        console.log("sprite y", spriteInitialY);
+
+        console.log("val preview", [PAL, PAT, PAR, PAB]);
+        console.log("val sprite", [SAL, SAT, SAR, SAB]);
+
+
+        if (PAL > SAL || PAT > SAT || PAR < SAR || PAB < SAB) {
+            event.currentTarget.style.position = "absolute";
+            event.currentTarget.style.left = spriteInitialX.current + "px";
+            event.currentTarget.style.top = spriteInitialY.current + "px";
+        }
+
         spriteDragging.current = false;
         currentX.current = 0;
         currentY.current = 0;

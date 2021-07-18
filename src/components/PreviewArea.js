@@ -55,7 +55,8 @@ export default function PreviewArea(props) {
         // <div>
         // { list }
         // </div>
-
-        list
+        <div id="PreviewArea" style={{ height: "100%", width: "100%" }}>
+            {list}
+        </div>
     );
 }
