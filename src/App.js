@@ -17,6 +17,7 @@ const tagProps = (classes, handleDragStart, handleDrag, handleDragEnd, handleSpr
             item: true,
         },
         dragFuncProps: {
+            handleClick: performOperations,
             handleDragStart,
             handleDrag,
             handleDragEnd
@@ -52,6 +53,8 @@ export default function App() {
     const [allSprites, setAllSprites] = useState([Constants.CAT_SPRITE]);
 
     const [TooltipOpen, setTooltipOpen] = useState(false);
+
+    const middleMove = useRef(0);
 
     const classes = useStyles();
 
@@ -116,6 +119,7 @@ export default function App() {
         if (targetId[2] === "0") {
             let clone = cloneTargetElement(event.currentTarget, targetId);
             selectedElement.current = clone;
+            middleMove.current = false;
         }
 
         //move
@@ -129,16 +133,18 @@ export default function App() {
                 //top element
 
                 grpArr = removeFromGroup(grpArr, Constants.REMOVE_FIRST_ELEMENT);
+                middleMove.current = false;
             }
             else if (pos === grpArr.length) {
                 //bottom element
                 grpArr = removeFromGroup(grpArr, Constants.REMOVE_LAST_ELEMENT);
-
+                middleMove.current = false;
             }
             else {
                 //middle element
-                console.log('middle element');
-                grpArr = removeFromGroup(grpArr, Constants.REMOVE_MIDDLE_ELEMENT);
+                // console.log('middle element');
+                // grpArr = removeFromGroup(grpArr, Constants.REMOVE_MIDDLE_ELEMENT);
+                middleMove.current = true;
                 return;
 
             }
@@ -178,6 +184,10 @@ export default function App() {
 
     const handleDrag = (event) => {
 
+        if (middleMove.current) {
+            return;
+        }
+
         if (dragging.current) {
 
             let left = event.pageX - diffX.current;
@@ -194,6 +204,11 @@ export default function App() {
     }
 
     const handleDragEnd = (event) => {
+
+        if (middleMove.current) {
+            return;
+        }
+
         dragging.current = false
 
         let [MAL, MAT, MAR, MAB] = getLTRB(document.getElementById("MidArea"));
@@ -244,6 +259,11 @@ export default function App() {
                                 return;
                             }
 
+                            if (existingOBJ.Position < groups.current[existingOBJ.Group].length) {
+                                currentUI.remove();
+                                return;
+                            }
+
 
                             currentUI.style.top = EEB + 1 + "px";
                             currentUI.style.left = EEL + "px";
@@ -258,6 +278,11 @@ export default function App() {
                         // check if in range for top attachment
                         if (CEB > EET - elHeight && CEB < EET + 0.5 * elHeight) {
                             if (existingOBJ.Type === Constants.TYPE_EVENT) {
+                                newElementUI.remove();
+                                return;
+                            }
+
+                            if (existingOBJ.Position !== 1) {
                                 newElementUI.remove();
                                 return;
                             }
@@ -392,7 +417,7 @@ export default function App() {
         let groupsObj = { ...groups.current };
         let groupsKeys = Object.keys(groupsObj);
 
-        if (clickedElement !== workingSprite) {
+        if (eventType === Constants.SUBTYPE_EVENT_SPRITE && clickedElement !== workingSprite) {
             return;
         }
 

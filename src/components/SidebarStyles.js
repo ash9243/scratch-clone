@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 export const useStyles = makeStyles((theme) => {
     let block = {
         padding: "10px",
-        margin: "10px",
+        margin: "5px",
         fontSize: "14px",
         width: "fit-content",
         color: "white",
@@ -28,8 +28,10 @@ export const useStyles = makeStyles((theme) => {
             backgroundColor: "rgba(46, 142, 184)"
         },
         flagIcon: {
+            ...block,
             color: "rgba(5,150,105)",
-            transform: "translate(0px,6px)"
+            padding: "10px 40px",
+            backgroundColor: "rgb(245,158,11)"
         },
         iconButton: {
             borderRadius: "50%",
@@ -41,6 +43,6 @@ export const useStyles = makeStyles((theme) => {
             borderRadius: "10%",
             margin: "10px",
             cursor: "pointer"
-        }
+        },
     });
 });

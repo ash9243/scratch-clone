@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Grid, IconButton, Dialog, DialogContent, DialogTitle, Button } from '@material-ui/core';
 import PetsIcon from '@material-ui/icons/Pets';
+import FlagIcon from '@material-ui/icons/Flag';
 
 
 import * as Constants from "../Common/Constants";
@@ -53,7 +54,9 @@ const tagsProps = (classes, props) => {
             alignItems: "center",
             justifyContent: "center",
             className: classes.dialogIcon
-
+        },
+        flagIconProps: {
+            className: classes.flagIcon
         }
     })
 
@@ -83,7 +86,7 @@ export default function Sidebar(props) {
 
     const [open, setopen] = useState(false);
 
-    const { motionBlockProps, eventBlockProps, looksBlockProps, controlsBlockProps, headerText, blockContainer, spriteProps } = tagsProps(classes, props);
+    const { motionBlockProps, eventBlockProps, looksBlockProps, controlsBlockProps, headerText, blockContainer, spriteProps, flagIconProps } = tagsProps(classes, props);
 
     const {
         flagClicked,
@@ -168,7 +171,7 @@ export default function Sidebar(props) {
             <Grid {...headerText}>Events</Grid>
             <Grid {...blockContainer}>
                 <Grid key="E:F:0" id="E:F:0" name={flagClicked} value="" {...eventBlockProps}>
-                    When flag Clicked
+                    When Flag Clicked
                 </Grid>
 
                 <Grid key="E:S:0" id="E:S:0" name={spriteClicked} value="" {...eventBlockProps}>
@@ -190,6 +193,13 @@ export default function Sidebar(props) {
             <Grid {...headerText}>Controls</Grid>
             <Grid {...blockContainer}>
                 <Grid key="C:W:0" id="C:W:0" {...controlsBlockProps} name={wait} value="5">Wait 5 sec</Grid>
+            </Grid>
+
+            <Grid {...headerText}>Flag</Grid>
+            <Grid {...blockContainer}>
+                <Grid onClick={() => {
+                    props.handleClick(Constants.SUBTYPE_EVENT_FLAG, "")
+                }} key="FlagToBeClicked" id="FlagToBeClicked" {...flagIconProps} ><FlagIcon /></Grid>
             </Grid>
 
             <Grid {...headerText}>Sprite</Grid>
