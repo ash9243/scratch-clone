@@ -102,7 +102,6 @@ export default function Sidebar(props) {
     const getSprite = () => {
         let [allSprites, setAllSprites] = props.allSprites;
         let list = [];
-        console.log('all sprites', allSprites);
         for (let i = 0; i < allSprites.length; i++) {
             if (allSprites[i] === Constants.CAT_SPRITE) {
                 list.push(
@@ -114,8 +113,8 @@ export default function Sidebar(props) {
                         alignItems="center"
                         justifyContent="center"
                         style={props.workingSprite[0] === Constants.CAT_SPRITE ?
-                            { border: "1px solid blue", borderRadius: "10px", width: "fit-content" }
-                            : { width: "fit-content" }
+                            { opacity: 1, width: "fit-content" }
+                            : { width: "fit-content", opacity: 0.4 }
                         }>
 
                         <Grid item onClick={() => {
@@ -142,8 +141,8 @@ export default function Sidebar(props) {
                         justifyContent="center"
                         style={
                             props.workingSprite[0] === Constants.BAT_SPRITE ?
-                                { border: "1px solid blue", borderRadius: "10px", width: "fit-content" }
-                                : { width: "fit-content" }
+                                { opacity: 1, width: "fit-content" }
+                                : { width: "fit-content", opacity: 0.4 }
                         }>
 
                         <Grid item
@@ -161,7 +160,6 @@ export default function Sidebar(props) {
             }
         }
 
-        console.log('list is ', list);
         return list;
     }
 
@@ -222,6 +220,7 @@ export default function Sidebar(props) {
                             let allSprites = [...props.allSprites[0]];
                             allSprites.push(Constants.CAT_SPRITE);
                             props.allSprites[1](allSprites)
+                            props.workingSprite[1](Constants.CAT_SPRITE);
                             handleClose();
                         }}
                             {...spriteProps}
@@ -235,6 +234,7 @@ export default function Sidebar(props) {
                                 let allSprites = [...props.allSprites[0]];
                                 allSprites.push(Constants.BAT_SPRITE);
                                 props.allSprites[1](allSprites);
+                                props.workingSprite[1](Constants.BAT_SPRITE);
                                 handleClose();
                             }}
                             {...spriteProps}

@@ -17,7 +17,6 @@ export default function PreviewArea(props) {
                 <Tooltip open={props.workingSprite[0] === Constants.CAT_SPRITE && props.TooltipOpen} TransitionComponent={Zoom} leaveDelay={500} key={Constants.CAT_SPRITE_DIV} title="Hello" placement="right-start">
                     <div
                         style={{ height: "fit-content", width: "fit-content" }}
-                        key={Constants.CAT_SPRITE_DIV}
                         onClick={() => props.handleClick(Constants.SUBTYPE_EVENT_SPRITE, Constants.CAT_SPRITE)}
                         id={Constants.CAT_SPRITE_DIV}
                         draggable={true}
@@ -36,10 +35,9 @@ export default function PreviewArea(props) {
         }
         else if (allSprites[i] === Constants.BAT_SPRITE) {
             list.push(
-                <Tooltip open={props.workingSprite[0] === Constants.BAT_SPRITE && props.TooltipOpen} TransitionComponent={Zoom} leaveDelay={500} key={Constants.CAT_SPRITE_DIV} title="Hello" placement="right-start">
+                <Tooltip open={props.workingSprite[0] === Constants.BAT_SPRITE && props.TooltipOpen} TransitionComponent={Zoom} leaveDelay={500} key={Constants.BAT_SPRITE_DIV} title="Hello" placement="right-start">
                     <div
                         style={{ height: "fit-content", width: "fit-content" }}
-                        key={Constants.BAT_SPRITE_DIV}
                         onClick={() => props.handleClick(Constants.SUBTYPE_EVENT_SPRITE, Constants.BAT_SPRITE)}
                         id={Constants.BAT_SPRITE_DIV}
                         draggable={true}
