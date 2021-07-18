@@ -1,7 +1,8 @@
 import React from "react";
 import CatSprite from "./CatSprite";
 import Bat from './Bat';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip, Zoom } from '@material-ui/core';
+
 
 import * as Constants from "../Common/Constants";
 export default function PreviewArea(props) {
@@ -13,7 +14,7 @@ export default function PreviewArea(props) {
     for (let i = 0; i < allSprites.length; i++) {
         if (allSprites[i] === Constants.CAT_SPRITE) {
             list.push(
-                <Tooltip key={Constants.CAT_SPRITE_DIV} title="Hello" placement="right-start">
+                <Tooltip open={props.workingSprite[0] === Constants.CAT_SPRITE && props.TooltipOpen} TransitionComponent={Zoom} leaveDelay={500} key={Constants.CAT_SPRITE_DIV} title="Hello" placement="right-start">
                     <div
                         style={{ height: "fit-content", width: "fit-content" }}
                         key={Constants.CAT_SPRITE_DIV}
@@ -23,6 +24,10 @@ export default function PreviewArea(props) {
                         onDragStart={props.handleSpriteDragStart}
                         onDrag={props.handleSpriteDrag}
                         onDragEnd={props.handleSpriteDragEnd}
+                        onMouseEnter={(event) => {
+                            event.preventDefault();
+                            return false;
+                        }}
                     >
                         <CatSprite handleClick={props.handleClick} />
                     </div>
@@ -31,7 +36,7 @@ export default function PreviewArea(props) {
         }
         else if (allSprites[i] === Constants.BAT_SPRITE) {
             list.push(
-                <Tooltip key={Constants.CAT_SPRITE_DIV} title="Hello" placement="right-start">
+                <Tooltip open={props.workingSprite[0] === Constants.BAT_SPRITE && props.TooltipOpen} TransitionComponent={Zoom} leaveDelay={500} key={Constants.CAT_SPRITE_DIV} title="Hello" placement="right-start">
                     <div
                         style={{ height: "fit-content", width: "fit-content" }}
                         key={Constants.BAT_SPRITE_DIV}

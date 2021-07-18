@@ -51,6 +51,8 @@ export default function App() {
     const [workingSprite, setWorkingSprite] = useState(Constants.CAT_SPRITE);
     const [allSprites, setAllSprites] = useState([Constants.CAT_SPRITE]);
 
+    const [TooltipOpen, setTooltipOpen] = useState(false);
+
     const classes = useStyles();
 
     const handleSpriteDragStart = (event) => {
@@ -137,6 +139,7 @@ export default function App() {
                 //middle element
                 console.log('middle element');
                 grpArr = removeFromGroup(grpArr, Constants.REMOVE_MIDDLE_ELEMENT);
+                return;
 
             }
             if (grpArr.length === 0) {
@@ -236,7 +239,7 @@ export default function App() {
 
 
                             //event type cant be added to the bottom
-                            if (currentOBJ.type === Constants.TYPE_EVENT) {
+                            if (currentOBJ.Type === Constants.TYPE_EVENT) {
                                 currentUI.remove();
                                 return;
                             }
@@ -254,10 +257,10 @@ export default function App() {
 
                         // check if in range for top attachment
                         if (CEB > EET - elHeight && CEB < EET + 0.5 * elHeight) {
-                            // if (existingElement.elementType === Constants.Type_Event) {
-                            //     newElement.remove();
-                            //     return;
-                            // }
+                            if (existingOBJ.Type === Constants.TYPE_EVENT) {
+                                newElementUI.remove();
+                                return;
+                            }
 
                             // if (groups[existingElement.group][existingElement.position - 2]) {
                             //     newElement.remove();
@@ -484,14 +487,12 @@ export default function App() {
 
     const sayHello = () => {
 
-        let cat = document.getElementById('catSprite');
-        let event = new Event("mouseenter");
-        let event2 = new Event("mouseleave");
-        cat.dispatchEvent(event);
+        setTooltipOpen(true);
 
         setTimeout(() => {
-            cat.dispatchEvent(event2);
-        }, 2000)
+            setTooltipOpen(false);
+        }, 2000);
+
     }
 
     const wait = (milliseconds) => {
@@ -525,6 +526,7 @@ export default function App() {
             <Grid {...sectionProps} style={{ width: "41.5%" }}  >
                 <PreviewArea
                     workingSprite={[workingSprite, setWorkingSprite]}
+                    TooltipOpen={TooltipOpen}
                     allSprites={[allSprites, setAllSprites]}
                     {...spriteDragProps}
                 />

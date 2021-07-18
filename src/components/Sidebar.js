@@ -197,7 +197,7 @@ export default function Sidebar(props) {
             <Grid {...headerText}>Sprite</Grid>
             <Grid container item>
                 <Grid container>
-                    <Grid item xs={10}>
+                    <Grid item xs={10} style={{ display: "flex" }}>
                         {getSprite()}
                     </Grid>
 
