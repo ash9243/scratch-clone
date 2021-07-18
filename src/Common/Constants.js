@@ -1,5 +1,7 @@
 export const TYPE_EVENT = "EVENT";
 export const TYPE_MOTION = "MOTION";
+export const TYPE_LOOKS = "LOOKS";
+export const TYPE_CONTROLS = "CONTROLS";
 
 export const SUBTYPE_EVENT_FLAG = "FLAG";
 export const SUBTYPE_EVENT_SPRITE = "SPRITE";
@@ -8,7 +10,24 @@ export const SUBTYPE_MOTION_LINEAR = "LINEAR";
 export const SUBTYPE_MOTION_ROTATE_ANTICLOCKWISE = "ANTICLOCKWISE";
 export const SUBTYPE_MOTION_ROTATE_CLOCKWISE = "CLOCKWISE";
 
+export const SUBTYPE_LOOKS_HELLO = "HELLO";
+
+export const SUBTYPE_CONTROLS_WAIT = "WAIT";
 
 export const NEW_GROUP = "NEW GROUP";
 export const START_GROUP = "START GROUP";
 export const END_GROUP = "END GROUP";
+
+export const REMOVE_LAST_ELEMENT = "REMOVE LAST ELEMENT";
+export const REMOVE_FIRST_ELEMENT = "REMOVE FIRST ELEMENT";
+export const REMOVE_MIDDLE_ELEMENT = "REMOVE MIDDLE ELEMENT";
+
+export const DECREASE_POSITION = "DECREASE POSITION";
+export const INCREASE_POSITION = "INCREASE POSITION";
+
+
+export const CAT_SPRITE = "CAT SPRITE";
+export const BAT_SPRITE = "BAT SPRITE";
+
+export const CAT_SPRITE_DIV = "CAT SPRITE DIV";
+export const BAT_SPRITE_DIV = "BAT SPRITE DIV";

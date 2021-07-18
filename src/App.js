@@ -8,7 +8,7 @@ import { useStyles } from './AppStyles';
 import * as Constants from "./Common/Constants";
 
 
-const tagProps = (classes, handleDragStart, handleDrag, handleDragEnd) => {
+const tagProps = (classes, handleDragStart, handleDrag, handleDragEnd, handleSpriteDragStart, handleSpriteDrag, handleSpriteDragEnd, performOperations) => {
     return {
         sectionProps: {
             component: Card,
@@ -20,7 +20,12 @@ const tagProps = (classes, handleDragStart, handleDrag, handleDragEnd) => {
             handleDragStart,
             handleDrag,
             handleDragEnd
-
+        },
+        spriteDragProps: {
+            handleClick: performOperations,
+            handleSpriteDragStart,
+            handleSpriteDrag,
+            handleSpriteDragEnd
         }
     }
 }
@@ -34,7 +39,50 @@ export default function App() {
 
     const groups = useRef({});
 
+    const currentX = useRef(0);
+    const currentY = useRef(0);
+    const currentD = useRef(0);
+
+    const spriteX = useRef(0);
+    const spriteY = useRef(0);
+    const spriteDragging = useRef(false);
+    const selectedSprite = useRef(null);
+
+    const [workingSprite, setWorkingSprite] = useState(Constants.CAT_SPRITE);
+    const [allSprites, setAllSprites] = useState([Constants.CAT_SPRITE]);
+
     const classes = useStyles();
+
+    const handleSpriteDragStart = (event) => {
+        spriteX.current = event.pageX - event.currentTarget.getBoundingClientRect().left;
+        spriteY.current = event.pageY - event.currentTarget.getBoundingClientRect().top;
+        spriteDragging.current = true;
+        selectedSprite.current = event.currentTarget;
+    }
+
+    const handleSpriteDrag = (event) => {
+
+        if (spriteDragging.current) {
+
+            let left = event.pageX - spriteX.current;
+            let top = event.pageY - spriteY.current;
+
+            if (event.pageX !== 0) {
+
+                selectedSprite.current.style.position = "absolute";
+                selectedSprite.current.style.left = left + "px";
+                selectedSprite.current.style.top = top + "px";
+
+            }
+        }
+    }
+
+    const handleSpriteDragEnd = (event) => {
+        spriteDragging.current = false;
+        currentX.current = 0;
+        currentY.current = 0;
+        currentD.current = 0;
+    }
 
     const cloneTargetElement = (element, targetId) => {
         //clone
@@ -58,23 +106,71 @@ export default function App() {
     }
 
     const handleDragStart = (event) => {
-        console.log("drag start");
 
         // element and provide id
         let targetId = event.currentTarget.id.split(":");
 
+        //clone
         if (targetId[2] === "0") {
             let clone = cloneTargetElement(event.currentTarget, targetId);
             selectedElement.current = clone;
         }
+
+        //move
         else {
-            selectedElement.current = event.currentTarget;
+
+            let move = event.currentTarget
+            let pos = move.Position;
+            let grpName = move.Group;
+            let grpArr = [...groups.current[grpName]];
+            if (pos === 1 && grpArr.length > 1) {
+                //top element
+
+                grpArr = removeFromGroup(grpArr, Constants.REMOVE_FIRST_ELEMENT);
+            }
+            else if (pos === grpArr.length) {
+                //bottom element
+                grpArr = removeFromGroup(grpArr, Constants.REMOVE_LAST_ELEMENT);
+
+            }
+            else {
+                //middle element
+                console.log('middle element');
+                grpArr = removeFromGroup(grpArr, Constants.REMOVE_MIDDLE_ELEMENT);
+
+            }
+            if (grpArr.length === 0) {
+                delete groups.current[grpName]
+            }
+            else {
+                groups.current[grpName] = grpArr;
+            }
+
+
+
+            selectedElement.current = move;
         }
 
 
         diffX.current = event.pageX - event.currentTarget.getBoundingClientRect().left;
         diffY.current = event.pageY - event.currentTarget.getBoundingClientRect().top;
         dragging.current = true;
+    }
+
+    const removeFromGroup = (group, type) => {
+        if (type === Constants.REMOVE_FIRST_ELEMENT) {
+            let removedElement = group.shift();
+            changePosition(removedElement.Group, Constants.DECREASE_POSITION);
+            return group;
+        }
+        else if (type === Constants.REMOVE_LAST_ELEMENT) {
+            group.pop();
+            return group;
+
+        }
+        else {
+
+        }
     }
 
     const handleDrag = (event) => {
@@ -115,9 +211,9 @@ export default function App() {
 
 
 
+
         if (groupsKeys.length === 0) {
-            newElementOBJ.Position = 1;
-            newElementOBJ.Group = "group1";
+            newElementOBJ = addDetailsUI(newElementOBJ, 1, "group1");
             addToGroup(newElementOBJ, Constants.NEW_GROUP);
         }
         else {
@@ -149,9 +245,7 @@ export default function App() {
                             currentUI.style.top = EEB + 1 + "px";
                             currentUI.style.left = EEL + "px";
 
-                            currentOBJ.Group = existingOBJ.Group;
-                            currentOBJ.Position = existingOBJ.Position + 1;
-
+                            currentOBJ = addDetailsUI(currentOBJ, existingOBJ.Position + 1, existingOBJ.Group);
 
                             addToGroup(currentOBJ, Constants.END_GROUP);
 
@@ -174,10 +268,13 @@ export default function App() {
                             currentUI.style.top = EET - elHeight - 1 + "px";
                             currentUI.style.left = EEL + "px";
 
-                            incrementPosition(existingOBJ.Group);
+                            changePosition(existingOBJ.Group, Constants.INCREASE_POSITION);
 
                             currentOBJ.Group = existingOBJ.Group;
                             currentOBJ.Position = 1;
+
+                            currentOBJ = addDetailsUI(currentOBJ, 1, existingOBJ.Group);
+
 
                             addToGroup(currentOBJ, Constants.START_GROUP);
 
@@ -190,12 +287,19 @@ export default function App() {
                 }
             }
 
-            newElementOBJ.Group = `group${groupsKeys.length + 1}`;
-            newElementOBJ.Position = 1;
-
+            newElementOBJ = addDetailsUI(newElementOBJ, 1, `group${groupsKeys.length + 1}`);
             addToGroup(newElementOBJ, Constants.NEW_GROUP);
         }
 
+        console.log('final groups is ', groups.current);
+    }
+
+    const addDetailsUI = (element, pos, group) => {
+        element.Position = pos;
+        element.Group = group;
+        element.UIElement.Position = pos;
+        element.UIElement.Group = group;
+        return element;
     }
 
     const fillElementDetails = (newElementUI) => {
@@ -235,23 +339,30 @@ export default function App() {
             groupObj[element.Group] = oldGroup;
         }
         groups.current = groupObj
-        console.log('GROUP CURRENT', groups.current);
     }
 
-    const incrementPosition = (groupName) => {
+    const changePosition = (groupName, type) => {
 
-        console.log("groups ", groups);
-        console.log("group name ", groupName);
 
         let group = [...groups.current[groupName]];
 
-        for (let i = 0; i < group.length; i++) {
-            group[i].Position++;
+        if (type === Constants.INCREASE_POSITION) {
+            for (let i = 0; i < group.length; i++) {
+                group[i].Position++;
+                group[i].UIElement.Position++;
+            }
+        }
+        else {
+            for (let i = 0; i < group.length; i++) {
+                group[i].Position--;
+                group[i].UIElement.Position--;
+            }
         }
 
         groups.current[groupName] = group;
-        console.log('groups is ', groups.current);
     }
+
+
 
     const getLTRB = (element) => {
         let BR = element.getBoundingClientRect();
@@ -273,14 +384,137 @@ export default function App() {
         return [height, width];
     }
 
+    const performOperations = (eventType, clickedElement) => {
+
+        let groupsObj = { ...groups.current };
+        let groupsKeys = Object.keys(groupsObj);
+
+        if (clickedElement !== workingSprite) {
+            return;
+        }
 
 
-    const { sectionProps, dragFuncProps } = tagProps(classes, handleDragStart, handleDrag, handleDragEnd);
+        for (let i = 0; i < groupsKeys.length; i++) {
+            if (
+                groupsObj[groupsKeys[i]][0].Type === Constants.TYPE_EVENT &&
+                groupsObj[groupsKeys[i]][0].Subtype === eventType
+            ) {
+                for (let j = 0; j < groupsObj[groupsKeys[i]].length; j++) {
+
+                    performMotion(groupsObj[groupsKeys[i]][j]);
+                    // sleep(1000);
+                }
+            }
+        }
+
+    }
+
+    const performMotion = (element) => {
+        //motion
+        if (element.Type === Constants.TYPE_MOTION) {
+            //move steps
+            if (element.Subtype === Constants.SUBTYPE_MOTION_LINEAR) {
+                performMovement(parseInt(element.Value, 10));
+            }
+            //rotate anticlockwise
+            else if (
+                element.Subtype === Constants.SUBTYPE_MOTION_ROTATE_ANTICLOCKWISE
+            ) {
+                performRotation(
+                    parseInt(element.Value, 10) * -1
+                );
+            }
+            //rotate clockwise
+            else {
+                performRotation(parseInt(element.Value, 10));
+            }
+        }
+
+        else if (element.Type === Constants.TYPE_LOOKS) {
+            if (element.Subtype === Constants.SUBTYPE_LOOKS_HELLO) {
+                sayHello();
+            }
+        }
+
+        else if (element.Type === Constants.TYPE_CONTROLS) {
+            if (element.Subtype === Constants.SUBTYPE_CONTROLS_WAIT) {
+                wait(parseInt(element.Value, 10) * 1000)
+            }
+        }
+    }
+
+    const performRotation = (degree) => {
+        let catSprite = document.getElementById(workingSprite + " DIV");
+        let rotation = currentD.current;
+        let trans = rotation + degree;
+        catSprite.style.transform = `rotate(${trans}deg)`;
+
+        currentD.current = trans;
+    }
+
+    const performMovement = (steps) => {
+        let catSpriteDiv = document.getElementById(workingSprite + " DIV");
+
+
+        let catX = catSpriteDiv.getBoundingClientRect().left;
+        let catY = catSpriteDiv.getBoundingClientRect().top;
+        // let catX = currentX.current;
+        // let catY = currentY.current;
+        let rotation = currentD.current;
+        let cosX = Math.cos(rotation * (Math.PI / 180));
+        let sinX = Math.sin(rotation * (Math.PI / 180));
+
+        //need to find using sin and cosin
+        let x = steps * cosX;
+        let y = steps * sinX;
+
+
+        // catSpriteDiv.style.transform = `translate(
+        //   ${catX + x}px,
+        //   ${catY + y}px
+        //   )`;
+
+        catSpriteDiv.style.position = "absolute";
+        catSpriteDiv.style.top = catY + y + "px";
+        catSpriteDiv.style.left = catX + x + "px";
+
+        currentX.current = catX + x;
+        currentY.current = catY + y;
+    }
+
+    const sayHello = () => {
+
+        let cat = document.getElementById('catSprite');
+        let event = new Event("mouseenter");
+        let event2 = new Event("mouseleave");
+        cat.dispatchEvent(event);
+
+        setTimeout(() => {
+            cat.dispatchEvent(event2);
+        }, 2000)
+    }
+
+    const wait = (milliseconds) => {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            // if (new Date().getTime() - start > milliseconds - 3) {
+            //     console.log(' 3 sec complete')
+            // }
+            if (new Date().getTime() - start > milliseconds) {
+                break;
+            }
+        }
+    }
+
+
+    const { sectionProps, dragFuncProps, spriteDragProps } = tagProps(classes, handleDragStart, handleDrag, handleDragEnd, handleSpriteDragStart, handleSpriteDrag, handleSpriteDragEnd, performOperations);
 
     return (
         <Grid container className={classes.mainContainer}>
             <Grid {...sectionProps} style={{ padding: "2px" }}>
                 <Sidebar
+                    workingSprite={[workingSprite, setWorkingSprite]}
+                    allSprites={[allSprites, setAllSprites]}
                     {...dragFuncProps}
                 />
             </Grid>
@@ -288,9 +522,11 @@ export default function App() {
                 <MidArea
                 />
             </Grid>
-            <Grid {...sectionProps} style={{ width: "41.5%" }} >
+            <Grid {...sectionProps} style={{ width: "41.5%" }}  >
                 <PreviewArea
-                    {...dragFuncProps}
+                    workingSprite={[workingSprite, setWorkingSprite]}
+                    allSprites={[allSprites, setAllSprites]}
+                    {...spriteDragProps}
                 />
             </Grid>
         </Grid>

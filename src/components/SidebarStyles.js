@@ -19,9 +19,28 @@ export const useStyles = makeStyles((theme) => {
             ...block,
             backgroundColor: "rgba(59,130,246)"
         },
+        looksBlock: {
+            ...block,
+            backgroundColor: "rgba(119, 77, 203)"
+        },
+        controlsBlock: {
+            ...block,
+            backgroundColor: "rgba(46, 142, 184)"
+        },
         flagIcon: {
             color: "rgba(5,150,105)",
             transform: "translate(0px,6px)"
+        },
+        iconButton: {
+            borderRadius: "50%",
+            height: "100px",
+            width: "100px"
+        },
+        dialogIcon: {
+            border: "1px solid gray",
+            borderRadius: "10%",
+            margin: "10px",
+            cursor: "pointer"
         }
     });
 });

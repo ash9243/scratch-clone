@@ -1,8 +1,12 @@
 import React from "react";
+import { Tooltip } from '@material-ui/core';
+
+import * as Constants from '../Common/Constants';
 
 export default function CatSprite(props) {
     return (
         <svg
+            id={Constants.CAT_SPRITE}
             xmlns="http://www.w3.org/2000/svg"
             width="95.17898101806641"
             height="100.04156036376953"
