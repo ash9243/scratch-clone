@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, IconButton, Dialog, DialogContent, DialogTitle, Button } from '@material-ui/core';
+import { Grid, IconButton, Dialog, DialogContent, DialogTitle, Button, DialogActions } from '@material-ui/core';
 import PetsIcon from '@material-ui/icons/Pets';
 import FlagIcon from '@material-ui/icons/Flag';
 
@@ -166,6 +166,20 @@ export default function Sidebar(props) {
         return list;
     }
 
+    const handleSpriteClicked = (type) => {
+        let allSprites = [...props.allSprites[0]];
+        for (let i = 0; i < allSprites.length; i++) {
+            if (allSprites[i] === type) {
+                alert('Already present');
+                return;
+            }
+        }
+        allSprites.push(type);
+        props.allSprites[1](allSprites);
+        props.workingSprite[1](type);
+        handleClose();
+    }
+
     return (
         <Grid container direction="column" style={{ height: "100%", width: "100%" }}>
             <Grid {...headerText}>Events</Grid>
@@ -227,11 +241,7 @@ export default function Sidebar(props) {
                 <DialogContent>
                     <Grid container>
                         <Grid onClick={() => {
-                            let allSprites = [...props.allSprites[0]];
-                            allSprites.push(Constants.CAT_SPRITE);
-                            props.allSprites[1](allSprites)
-                            props.workingSprite[1](Constants.CAT_SPRITE);
-                            handleClose();
+                            handleSpriteClicked(Constants.CAT_SPRITE);
                         }}
                             {...spriteProps}
                         >
@@ -241,19 +251,23 @@ export default function Sidebar(props) {
 
                         <Grid
                             onClick={() => {
-                                let allSprites = [...props.allSprites[0]];
-                                allSprites.push(Constants.BAT_SPRITE);
-                                props.allSprites[1](allSprites);
-                                props.workingSprite[1](Constants.BAT_SPRITE);
-                                handleClose();
+                                handleSpriteClicked(Constants.BAT_SPRITE);
                             }}
                             {...spriteProps}
                         >
                             <Bat />
                             bat
                         </Grid>
+
+
                     </Grid>
                 </DialogContent>
+
+                <DialogActions>
+                    <Button onClick={handleClose}>
+                        Close
+                    </Button>
+                </DialogActions>
             </Dialog>
         </Grid>
     );
