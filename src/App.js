@@ -6,6 +6,7 @@ import MidArea from "./components/MidArea";
 import PreviewArea from "./components/PreviewArea";
 import { useStyles } from './AppStyles';
 import * as Constants from "./Common/Constants";
+import { LocalConvenienceStoreOutlined } from "@material-ui/icons";
 
 
 const tagProps = (classes, handleDragStart, handleDrag, handleDragEnd, handleSpriteDragStart, handleSpriteDrag, handleSpriteDragEnd, performOperations) => {
@@ -503,7 +504,11 @@ export default function App() {
         let catSprite = document.getElementById(workingSprite + " DIV");
         let rotation = currentD.current;
         let trans = rotation + degree;
-        catSprite.style.transform = `rotate(${trans}deg)`;
+        catSprite.style.transform = `
+        translate(
+            ${currentX.current}px,
+            ${currentY.current}px
+            ) rotate(${trans}deg)`;
 
         currentD.current = trans;
     }
@@ -512,10 +517,10 @@ export default function App() {
         let catSpriteDiv = document.getElementById(workingSprite + " DIV");
 
 
-        let catX = catSpriteDiv.getBoundingClientRect().left;
-        let catY = catSpriteDiv.getBoundingClientRect().top;
-        // let catX = currentX.current;
-        // let catY = currentY.current;
+        // let catX = catSpriteDiv.getBoundingClientRect().left;
+        // let catY = catSpriteDiv.getBoundingClientRect().top;
+        let catX = currentX.current;
+        let catY = currentY.current;
         let rotation = currentD.current;
         let cosX = Math.cos(rotation * (Math.PI / 180));
         let sinX = Math.sin(rotation * (Math.PI / 180));
@@ -525,14 +530,43 @@ export default function App() {
         let y = steps * sinX;
 
 
-        // catSpriteDiv.style.transform = `translate(
-        //   ${catX + x}px,
-        //   ${catY + y}px
-        //   )`;
+        // let splitArr = [];
 
-        catSpriteDiv.style.position = "absolute";
-        catSpriteDiv.style.top = catY + y + "px";
-        catSpriteDiv.style.left = catX + x + "px";
+        // if (catSpriteDiv.style.transform) {
+        //     splitArr = catSpriteDiv.style.transform
+        //         .replace("translate(", "")
+        //         .replace("px", "")
+        //         .replace("px", "")
+        //         .replace(")", "")
+        //         .replace(" ", "")
+        //         .split(",");
+
+        //     catX = parseInt(splitArr[0], 10);
+        //     catY = parseInt(splitArr[1], 10);
+
+        //     console.log('splitArr', splitArr);
+        //     console.log('cat sprite div ', catSpriteDiv.style.transform);
+
+        //     console.log(splitArr[0]);
+        //     console.log(splitArr[1]);
+
+        //     console.log('x', catX);
+        //     console.log('y', catY);
+        // }
+
+        console.log("cat x", catX + x);
+        console.log('cat y ', catY + y);
+
+
+        catSpriteDiv.style.transform = `translate(
+          ${catX + x}px,
+          ${catY + y}px
+          ) rotate(${currentD.current})`;
+
+        // catSpriteDiv.style.position = "absolute";
+        // catSpriteDiv.style.top = catY + y + "px";
+        // catSpriteDiv.style.left = catX + x + "px";
+
 
         currentX.current = catX + x;
         currentY.current = catY + y;
